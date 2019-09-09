@@ -10,3 +10,7 @@
 	path = conciliacion_bancaria
 	url = https://github.com/rocketgithub/conciliacion_bancaria.git
 	branch = 11.0
+[submodule "rrhh"]
+	path = rrhh
+	url = https://github.com/rocketgithub/rrhh.git
+	branch = 11.0

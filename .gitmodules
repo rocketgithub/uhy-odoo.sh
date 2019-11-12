@@ -16,4 +16,4 @@
 	branch = 11.0
 [submodule "uhy"]
 	path = uhy
-	url = https://github.com/rocketgithub/uhy.git
+	url = git@github.com:rocketgithub/uhy.git

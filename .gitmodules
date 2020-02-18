@@ -14,3 +14,6 @@
 	path = rrhh
 	url = https://github.com/rocketgithub/rrhh.git
 	branch = 11.0
+[submodule "fel_infile"]
+	path = fel_infile
+	url = https://github.com/rocketgithub/fel_infile.git

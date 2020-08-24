@@ -23,11 +23,3 @@
 [submodule "fel_gt"]
 	path = fel_gt
 	url = git@github.com:rocketgithub/fel_gt.git
-[submodule "es_custom_security_group"]
-	path = es_custom_security_group
-	url = https://github.com/odoouhy/es_custom_security_group.git
-	branch = master
-[submodule "es_beauty_so"]
-	path = es_beauty_so
-	url = https://github.com/odoouhy/es_beauty_so.git
-	branch = master

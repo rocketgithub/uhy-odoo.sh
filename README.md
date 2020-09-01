@@ -1,1 +1,0 @@
-# uhy-odoo.sh

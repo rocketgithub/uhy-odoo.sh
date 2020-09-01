@@ -31,3 +31,7 @@
 	path = es_beauty_so
 	url = git@github.com:odoouhy/es_beauty_so.git
 	branch = master
+[submodule "uhyextras"]
+	path = uhyextras
+	url = git@github.com:odoouhy/uhyextras.git
+	branch = testing

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="view_report_general_wizard_purchase" model="ir.ui.view">
+        <field name="name">Reporte General Wizard Purchase</field>
+        <field name="model">report.general.wizard.purchase</field>
+        <field name="arch" type='xml'>
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                        <field name="fecha_start"/>
+                        </group>
+                        <group>
+                        <field name="fecha_end"/>
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="Imprimir" name="print_report_purchase" type="object" class="btn-success"/>
+                    O 
+                    <button special="cancel" string="Cancelar" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window
+        id="action_print_reporte_general_wizard_purchase"
+        name="Imprimir Reporte compras"
+        res_model="report.general.wizard.purchase"
+        view_mode="form"
+        target="new"
+    />
+
+    <menuitem id="menu_finance_report_general_compras" name="Libro de Compras HN" parent="account.menu_finance_reports" action="action_print_reporte_general_wizard_purchase" groups="l10n_hn_fiscal.group_show_l10n_hn_fiscal"/>
+</odoo>

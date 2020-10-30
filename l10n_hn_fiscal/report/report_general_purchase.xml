@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <report id="report_general_print_purchase"
+            string="Libro de Compras"
+            model="account.invoice"
+            report_type="qweb-pdf"
+            name="l10n_hn_fiscal.reporte_general_print_purchase"
+            paperformat="paperformat_landscape_a4_hn" />
+
+    <template id="reporte_general_print_purchase">
+        <t t-call="web.html_container">
+        <t t-call="web.basic_layout">
+            <div class="page small">
+                <div class="header">
+                </div>
+
+                <div class="article">
+
+                    <div class="row">
+                        <div class="col-sx-12">
+                            <h4>Libro de Compras</h4>
+                        </div>
+                    </div>
+
+                        <div class="row mt10 mb10">
+                            <div class="col-6" >
+                                <strong>Desde:</strong>
+                                <p t-esc="fecha_start" />
+                            </div>
+                            <div class="col-6">
+                                <strong>Hasta:</strong>
+                                <p t-esc="fecha_end" />
+                            </div>
+
+                        </div>
+
+                    <h4>Facturas y Notas de Debito Proveedor</h4>
+                    <table class="table table-condensed" name="invoice_line_table">
+
+                        <t t-set="gravado" t-value="0" />
+                        <t t-set="exento" t-value="0" />
+                        <t t-set="exonerado" t-value="0" />
+                        <t t-set="impuesto" t-value="0" />
+                        <t t-set="total" t-value="0" />
+
+
+                        <thead>
+                            <tr>
+                                <th class="col-xs-1 text-left">Fecha</th>
+                                <th class="col-xs-3 text-left">Nombre</th>
+                                <th class="col-xs-1 text-left">RTN</th>
+                                <th class="col-xs-2 text-left">Factura</th>
+                                <th class="col-xs-1 text-right">Importe Gravado</th>
+                                <th class="col-xs-1 text-right">Importe Exento</th>
+                                <th class="col-xs-1 text-right">Importe Exonerado</th>
+                                <th class="col-xs-1 text-right">Impuesto</th>
+                                <th class="col-xs-1 text-right">Total</th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="invoice_tbody" style="">
+                            <t t-foreach="purchases" t-as="purchase">
+                                <t t-if="purchase['journal_id.name'] == 'Facturas de proveedor' or purchase['journal_id.name'] == 'Notas de Debito' and purchase['type'] == 'in_invoice'">
+                                    <tr>
+                                        <!-- Fecha -->
+                                        <td class="col-xs-1 text-left"><span t-esc="purchase['date_invoice']" /></td>
+
+                                        <!-- Nombre -->
+                                        <td class="col-xs-3 text-left"><span t-esc="purchase['partner_id.name'][:35]" /></td>
+
+                                        <!-- RTN -->
+                                        <td class="col-xs-1 text-left"><span t-esc="purchase['partner_id.vat']" /></td>
+
+                                        <!-- Factura -->
+                                        <td class="col-xs-2 text-left" t-if="purchase['state'] == 'cancel'"><span
+                                                t-esc="purchase['reference']" /></td>
+                                        <td class="col-xs-2 text-left" t-if="purchase['state'] != 'cancel'"><span
+                                                t-esc="purchase['reference']" /></td>
+
+                                        <!-- Compras gravadas -->
+                                        <td class="col-xs-1 text-right"
+                                            t-if="purchase['state'] == 'cancel'"><span
+                                                >0</span>
+                                        </td>
+                                        <td class="col-xs-1 text-right" t-if="purchase['state'] != 'cancel'">
+                                            <t t-set="gravado" t-value="gravado + abs(-(purchase['amount_tax'] + purchase['global_exempt'] + purchase['global_exonerated'] - purchase['amount_total']))" /> <span
+                                                t-esc="round(-(purchase['amount_tax'] + purchase['global_exempt'] + purchase['global_exonerated'] - purchase['amount_total']),2)"
+                                                />
+                                        </td>
+
+                                        <!-- Compras Exentas -->
+                                        <td class="col-xs-1 text-right" t-if="purchase['state'] == 'cancel'">
+                                           <!-- <t t-set="exento" t-value="exento + purchase['global_exempt']" /> --><span
+                                                >0</span>
+                                        </td>
+                                        <td class="col-xs-1 text-right" t-if="purchase['state'] != 'cancel'">
+                                            <t t-set="exento" t-value="exento + purchase['global_exempt']" /> <span
+                                                t-esc="round(purchase['global_exempt'],2)"
+                                                />
+                                        </td>
+
+                                        <!-- Compras exoneradas -->
+                                        <td class="col-xs-1 text-right" t-if="purchase['state'] == 'cancel'">
+                                           <!-- <t t-set="exonerado" t-value="exonerado + purchase['global_exonerated']" /> --> <span
+                                                >0</span>
+                                        </td>
+                                        <td class="col-xs-1 text-right" t-if="purchase['state'] != 'cancel'">
+                                            <t t-set="exonerado" t-value="exonerado + purchase['global_exonerated']" /> <span
+                                                t-esc="round(purchase['global_exonerated'],2)"
+                                                />
+                                        </td>
+
+                                        <!-- Impuesto -->
+                                        <td class="col-xs-1 text-right" t-if="purchase['state'] == 'cancel'"><span
+                                                >0</span>
+                                        </td>
+                                        <td class="col-xs-1 text-right" t-if="purchase['state'] != 'cancel'">
+                                                <t t-set="impuesto" t-value="impuesto + purchase['amount_tax']" /><span
+                                                t-esc="round(purchase['amount_tax'],2)"
+                                                />
+                                        </td>
+
+
+                                        <!-- Total -->
+                                        <td class="col-xs-1 text-right" t-if="purchase['state'] == 'cancel'"><span
+                                                >0</span>
+                                        </td>
+                                        <td class="col-xs-1 text-right" t-if="purchase['state'] != 'cancel'">
+                                                <t t-set="total" t-value="total + purchase['amount_total']" /><span
+                                                t-esc="round(purchase['amount_total'],2)"
+                                                />
+                                        </td>
+
+                                    </tr>
+
+                                </t>
+                            </t>
+                        </tbody>
+
+
+                    </table>
+
+                    <table class="table table-condensed" name="invoice_line_table" style="border-top: 3px solid black;">
+                        <thead>
+                            <tr style="font-size:12px !important">
+                                <th class="col-xs-1 text-right"/>
+                                <th class="col-xs-3 text-right"/>
+                                <th class="col-xs-1 text-right"/>
+                                <th class="col-xs-2 text-right"/>
+                                    <th class="col-xs-1 text-right"><span t-esc="round(gravado,2)" /></th>
+                                    <th class="col-xs-1 text-right"><span t-esc="round(exento,2)"/></th>
+                                    <th class="col-xs-1 text-right"><span t-esc="round(exonerado,2)"/></th>
+                                    <th class="col-xs-1 text-right"><span t-esc="round(impuesto,2)"/></th>
+                                    <th class="col-xs-1 text-right"><span t-esc="round(total,2)"/></th>
+                            </tr>
+                        </thead>
+                    </table>
+
+                    <!-- Notas de Credito -->
+
+                    <h4>Notas de Credito</h4>
+                    <table class="table table-condensed" name="invoice_line_table">
+
+                        <t t-set="gravadoc" t-value="0" />
+                        <t t-set="exentoc" t-value="0" />
+                        <t t-set="exoneradoc" t-value="0" />
+                        <t t-set="impuestoc" t-value="0" />
+                        <t t-set="totalc" t-value="0" />
+
+
+                        <thead>
+                            <tr>
+                                <th class="col-xs-1 text-left">Fecha</th>
+                                <th class="col-xs-3 text-left">Nombre</th>
+                                <th class="col-xs-1 text-left">RTN</th>
+                                <th class="col-xs-2 text-left">Factura</th>
+                                <th class="col-xs-1 text-right">Importe Gravado</th>
+                                <th class="col-xs-1 text-right">Importe Exento</th>
+                                <th class="col-xs-1 text-right">Importe Exonerado</th>
+                                <th class="col-xs-1 text-right">Impuesto</th>
+                                <th class="col-xs-1 text-right">Total</th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="invoice_tbody" style="">
+                            <t t-foreach="purchases" t-as="purchase">
+                                <t t-if="purchase['type'] == 'in_refund'">
+                                    <tr>
+                                        <!-- Fecha -->
+                                        <td class="col-xs-1 text-left"><span t-esc="purchase['date_invoice']" /></td>
+
+                                        <!-- Nombre -->
+                                        <td class="col-xs-3 text-left"><span t-esc="purchase['partner_id.name'][:35]" /></td>
+
+                                        <!-- RTN -->
+                                        <td class="col-xs-1 text-left"><span t-esc="purchase['partner_id.vat']" /></td>
+
+                                        <!-- Factura -->
+                                        <td class="col-xs-2 text-left" t-if="purchase['state'] == 'cancel'"><span
+                                                t-esc="purchase['reference']" /></td>
+                                        <td class="col-xs-2 text-left" t-if="purchase['state'] != 'cancel'"><span
+                                                t-esc="purchase['reference']" /></td>
+
+                                        <!-- Compras gravadas -->
+                                        <td class="col-xs-1 text-right"
+                                            t-if="purchase['state'] == 'cancel'"><span
+                                                >0</span>
+                                        </td>
+                                        <td class="col-xs-1 text-right" t-if="purchase['state'] != 'cancel'">
+                                            <t t-set="gravadoc" t-value="gravadoc + abs(-(purchase['amount_tax'] + purchase['global_exempt'] + purchase['global_exonerated'] - purchase['amount_total']))" /> <span
+                                                t-esc="round(-(purchase['amount_tax'] + purchase['global_exempt'] + purchase['global_exonerated'] - purchase['amount_total']),2)"
+                                                />
+                                        </td>
+
+                                        <!-- Compras Exentas -->
+                                        <td class="col-xs-1 text-right" t-if="purchase['state'] == 'cancel'">
+                                           <!-- <t t-set="exento" t-value="exento + purchase['global_exempt']" /> --><span
+                                                >0</span>
+                                        </td>
+                                        <td class="col-xs-1 text-right" t-if="purchase['state'] != 'cancel'">
+                                            <t t-set="exentoc" t-value="exentoc + purchase['global_exempt']" /> <span
+                                                t-esc="round(purchase['global_exempt'],2)"
+                                                />
+                                        </td>
+
+                                        <!-- Compras exoneradas -->
+                                        <td class="col-xs-1 text-right" t-if="purchase['state'] == 'cancel'">
+                                           <!-- <t t-set="exonerado" t-value="exonerado + purchase['global_exonerated']" /> --> <span
+                                                >0</span>
+                                        </td>
+                                        <td class="col-xs-1 text-right" t-if="purchase['state'] != 'cancel'">
+                                            <t t-set="exoneradoc" t-value="exoneradoc + purchase['global_exonerated']" /> <span
+                                                t-esc="round(purchase['global_exonerated'],2)"
+                                                />
+                                        </td>
+
+                                        <!-- Impuesto -->
+                                        <td class="col-xs-1 text-right" t-if="purchase['state'] == 'cancel'"><span
+                                                >0</span>
+                                        </td>
+                                        <td class="col-xs-1 text-right" t-if="purchase['state'] != 'cancel'">
+                                                <t t-set="impuestoc" t-value="impuestoc + purchase['amount_tax']" /><span
+                                                t-esc="round(purchase['amount_tax'],2)"
+                                                />
+                                        </td>
+
+                                        <!-- Total -->
+                                        <td class="col-xs-1 text-right" t-if="purchase['state'] == 'cancel'"><span
+                                                >0</span>
+                                        </td>
+                                        <td class="col-xs-1 text-right" t-if="purchase['state'] != 'cancel'">
+                                                <t t-set="totalc" t-value="totalc + purchase['amount_total']" /><span
+                                                t-esc="round(purchase['amount_total'],2)"
+                                                />
+                                        </td>
+
+                                    </tr>
+
+                                </t>
+                            </t>
+                        </tbody>
+
+
+                    </table>
+
+                    <table class="table table-condensed" name="invoice_line_table" style="border-top: 3px solid black;">
+                        <thead>
+                            <tr style="font-size:12px !important">
+                                <th class="col-xs-1 text-right"/>
+                                <th class="col-xs-3 text-right"/>
+                                <th class="col-xs-1 text-right"/>
+                                <th class="col-xs-2 text-right"/>
+                                    <th class="col-xs-1 text-right"><span t-esc="round(gravadoc,2)" /></th>
+                                    <th class="col-xs-1 text-right"><span t-esc="round(exentoc,2)"/></th>
+                                    <th class="col-xs-1 text-right"><span t-esc="round(exoneradoc,2)"/></th>
+                                    <th class="col-xs-1 text-right"><span t-esc="round(impuestoc,2)"/></th>
+                                    <th class="col-xs-1 text-right"><span t-esc="round(totalc,2)"/></th>
+                            </tr>
+                        </thead>
+                    </table>
+
+                    <h4>Total</h4>
+                    <table class="table table-condensed" name="invoice_line_table" style="border-top: 5px solid black;">
+                        <thead>
+                            <tr>
+                                <th class="col-xs-1 text-left"></th>
+                                <th class="col-xs-3 text-left"></th>
+                                <th class="col-xs-1 text-left"></th>
+                                <th class="col-xs-2 text-left"></th>
+                                <th class="col-xs-1 text-right">Importe Gravado</th>
+                                <th class="col-xs-1 text-right">Importe Exento</th>
+                                <th class="col-xs-1 text-right">Importe Exonerado</th>
+                                <th class="col-xs-1 text-right">Impuesto</th>
+                                <th class="col-xs-1 text-right">Total</th>
+                            </tr>
+                        </thead>
+
+                         <tbody class="invoice_tbody" style="">
+                                  <tr style="font-size:12px !important">
+                                        <!-- Fecha -->
+                                      <th class="col-xs-1 text-left"><span/></th>
+                                      <th class="col-xs-3 text-left"><span/></th>
+                                      <th class="col-xs-1 text-left"><span/></th>
+                                      <th class="col-xs-2 text-left"><span/></th>
+                                      <th class="col-xs-1 text-right"><span t-esc="gravado - gravadoc"/></th>
+                                      <th class="col-xs-1 text-right"><span t-esc="exento - exentoc"/></th>
+                                      <th class="col-xs-1 text-right"><span t-esc="exonerado - exoneradoc"/></th>
+                                      <th class="col-xs-1 text-right"><span t-esc="impuesto - impuestoc"/></th>
+                                      <th class="col-xs-1 text-right"><span t-esc="total - totalc"/></th>
+                                  </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+
+
+            </div>
+        </t>
+        </t>
+
+    </template>
+
+</odoo>

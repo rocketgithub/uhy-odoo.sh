@@ -1,0 +1,30 @@
+# -*- coding: utf-8 -*-
+{
+    'name': 'Facturacion SAR',
+    'version': '11.0.1.2',
+    'category': 'Account',
+    'author': 'IT Solutions',
+    'depends': [
+                'account',
+                'base',
+                'sale_management',
+                ],
+    'data':[
+        'data/report_paperformat_data.xml',
+        'data/l10n_hn_chart_data.xml',
+        'data/account.account.template.csv',
+        'data/l10n_hn_chart_post_data.xml',
+        'data/account_data.xml',
+        'data/account_chart_template_data.xml',
+        'report/report_general.xml',
+        'wizard/report_general.xml',
+        'report/report_general_purchase.xml',
+        'wizard/report_general_purchase.xml',
+        'report/report_invoice.xml',
+        'views/ir_sequence.xml',
+        'views/account_invoice.xml',
+        'views/res_group.xml',
+    ],
+    'license': 'OPL-1',
+    'installable': True,
+}   

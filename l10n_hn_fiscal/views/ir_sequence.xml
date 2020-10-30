@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="inherited_view_sequence" model="ir.ui.view">
+        <field name="name">Secuencia CAI</field>
+        <field name="model">ir.sequence</field>
+            <field name="inherit_id" ref="base.sequence_view"/>
+                <field name="arch" type="xml">
+                    <data>
+                        <xpath expr="//field[@name='implementation']" position="after">
+                        <field name="active_sar"/>
+                        <field name="cai" attrs="{'invisible': [('active_sar', '=', False)]}"/>
+                        <field name="range_start" attrs="{'invisible': [('active_sar', '=', False)]}"/>
+                        <field name="range_end" attrs="{'invisible': [('active_sar', '=', False)]}"/>
+                        </xpath>
+                        <xpath expr="//field[@name='active']" position="after">
+                        <field name="emition" attrs="{'invisible': [('active_sar', '=', False)]}"/>
+                        <field name="emition_limit" attrs="{'invisible': [('active_sar', '=', False)]}"/>
+                        </xpath>
+                    </data>
+                </field>
+    </record>
+</odoo>

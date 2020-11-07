@@ -11,8 +11,11 @@
                 ],
     'data':[
         'data/report_paperformat_data.xml',
-        'data/account.tax.group.csv',
-        'data/account.tax.csv',
+        'data/l10n_hn_chart_data.xml',
+        'data/account.account.template.csv',
+        'data/l10n_hn_chart_post_data.xml',
+        'data/account_data.xml',
+        'data/account_chart_template_data.xml',
         'report/report_general.xml',
         'wizard/report_general.xml',
         'report/report_general_purchase.xml',

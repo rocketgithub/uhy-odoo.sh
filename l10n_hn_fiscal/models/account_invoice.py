@@ -54,8 +54,9 @@ class AccountInvoice(models.Model):
                     self.range_end_str = fiscal.range_end_str
                     self.range_start_str = fiscal.range_start_str
                     self.cancelled_invoice = self.number
+                    self.write({'state': 'open'})
 
-        return self.write({'state': 'open'})
+        return super(AccountInvoice, self).invoice_validate()
 
 
     @api.one
